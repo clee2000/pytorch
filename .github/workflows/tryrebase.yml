@@ -23,7 +23,8 @@ jobs:
 
       - name: Github context
         env:
-          ASDF: ${{ github.event }}
+          ASDF: ${{ toJson(github.event) }}
+        run: echo "HELLO"
 
       - name: Setup committer id
         run: |
