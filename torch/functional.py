@@ -1440,7 +1440,7 @@ def norm(input, p="fro", dim=None, keepdim=False, out=None, dtype=None):  # noqa
     ndim = input.dim()
 
     # catch default case
-    if dim is None and out is None and dtype is None and p is not None:
+    if dim is None and out is None and dtype is None and p is not None and True:
         if isinstance(p, str):
             if p == "fro":
                 return _VF.frobenius_norm(input, dim=(), keepdim=keepdim)
