@@ -23,7 +23,6 @@ SECONDARY_LABELS = {
     "topic: bc_breaking",
     "topic: deprecation",
     "topic: new feature",
-    "topic: improvements",
     "topic: bug fixes",
     "topic: performance",
     "topic: documentation",
