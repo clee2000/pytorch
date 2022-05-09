@@ -26,7 +26,6 @@ SECONDARY_LABELS = {
     "topic: bug fixes",
     "topic: performance",
     "topic: documentation",
-    "topic: developer feature",
     "topic: not user facing",
 }
 # This secondary does not require a primary
