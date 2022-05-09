@@ -24,7 +24,6 @@ SECONDARY_LABELS = {
     "topic: deprecation",
     "topic: new feature",
     "topic: bug fixes",
-    "topic: performance",
     "topic: documentation",
     "topic: not user facing",
 }
