@@ -38,6 +38,7 @@ jobs:
         env:
           ORIGINAL_COMMIT: ${{ steps.update-file.outputs.original_commit }}
           NEW_COMMIT: ${{ steps.update-file.outputs.new_commit }}
+          THING: ${{ toJson(github) }}
         with:
           script: |
             const { repo, owner } = context.repo;
