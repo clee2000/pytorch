@@ -42,5 +42,5 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            console.log(${{ github }});
+            console.dir(${{ github }});
             console.log(context);
