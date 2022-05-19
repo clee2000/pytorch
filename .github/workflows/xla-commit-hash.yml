@@ -2,7 +2,7 @@ name: Update xla commit hash
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "5 * * * *"
   workflow_dispatch:
 
 env:
