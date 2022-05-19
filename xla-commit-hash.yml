@@ -1,0 +1,41 @@
+name: Update xla commit hash
+
+on:
+  pull_request:
+
+jobs:
+  update-xla-commit-hash:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout xla
+        shell: bash
+        run: |
+          git clone https://github.com/pytorch/xla.git --depth=1
+      - name: Get new commit hash and update file
+        id: update-file
+        shell: bash
+        run: |
+          echo "::set-output name=original_commit::$(cat .github/xla_commit_hash.txt)"
+          pushd xla
+          $(git rev-parse master) > ../.github/xla_commit_hash.txt
+          popd xla
+          echo "::set-output name=new_commit::$(cat .github/xla_commit_hash.txt)"
+          if [[ $(git diff --exit-code .github/xla_commit_hash.txt) ]]; then
+            git add .github/xla_commit_hash.txt
+            git commit -m "update xla commit hash"
+          fi
+      - name: Create Pull Request
+        uses: actions/github-script@v6
+        env:
+          ORIGINAL_COMMIT: ${{ steps.update-file.outputs.original_commit }}
+          NEW_COMMIT: ${{ steps.update-file.outputs.new_commit }}
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+            console.log(github);
