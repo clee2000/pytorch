@@ -42,8 +42,6 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            console.dir('${{ github }}');
-            console.log(context);
             const result = await github.rest.pulls.create({
               title: '[Example] Simple demo',
               owner,
