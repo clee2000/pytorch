@@ -41,10 +41,10 @@ jobs:
         env:
           ORIGINAL_COMMIT: ${{ steps.update-file.outputs.original_commit }}
           NEW_COMMIT: ${{ steps.update-file.outputs.new_commit }}
-          THING: ${{ toJson(github) }}
         with:
           script: |
             const { repo, owner } = context.repo;
+            const { NEW_BRANCH_NAME } = process.env
             const result = await github.rest.pulls.create({
               title: '[Example] Simple demo',
               owner,
