@@ -21,9 +21,13 @@ jobs:
         id: update-file
         shell: bash
         run: |
+          echo "success1"
           echo "::set-output name=original_commit::$(cat .github/xla_commit_hash.txt)"
+          echo "success2"
           pushd xla
-          $(git rev-parse master) > ../.github/xla_commit_hash.txt
+          echo "success3"
+          git rev-parse master > ../.github/xla_commit_hash.txt
+          echo "success4"
           popd xla
           echo "::set-output name=new_commit::$(cat .github/xla_commit_hash.txt)"
           if [[ $(git diff --exit-code .github/xla_commit_hash.txt) ]]; then
