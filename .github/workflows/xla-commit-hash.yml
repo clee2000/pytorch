@@ -21,6 +21,8 @@ jobs:
         id: update-file
         shell: bash
         run: |
+          pwd
+          ls
           echo "::set-output name=original_commit::$(cat .github/xla_commit_hash.txt)"
           pushd xla
           $(git rev-parse master) > ../.github/xla_commit_hash.txt
