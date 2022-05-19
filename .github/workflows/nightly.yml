@@ -2,12 +2,11 @@ name: nightly
 
 on:
   schedule:
-    - cron: 0 0 * * *
+    - cron: "*/5 * * * *"
   push:
     tags:
       - ciflow/nightly/*
   workflow_dispatch:
-
 
 concurrency:
   group: ${{ github.workflow }}--${{ github.event.pull_request.number || github.sha }}-${{ github.event_name == 'workflow_dispatch' }}
