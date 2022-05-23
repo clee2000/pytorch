@@ -45,6 +45,7 @@ jobs:
           THING: ${{ toJson(github) }}
           GITHUB_TOKEN: ${{ secrets.PAT }}
         with:
+          github-token: ${{ secrets.PAT }}
           script: |
             const { repo, owner } = context.repo;
             const { NEW_BRANCH_NAME, NEW_COMMIT, ORIGINAL_COMMIT, GITHUB_TOKEN } = process.env
