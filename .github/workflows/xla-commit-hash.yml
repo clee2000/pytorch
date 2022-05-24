@@ -53,7 +53,7 @@ jobs:
 
       - name: Update the existing PR
         shell: bash
-        if: ${{ !steps.already-existing.outputs.result }}
+        if: ${{ steps.already-existing.outputs.result }}
         env:
           BRANCH_NAME: ${{ steps.already-existing.outputs.result }}
         run: |
