@@ -44,6 +44,8 @@ jobs:
 
       - name: Set config and update file
         shell: bash
+        env:
+          THING: ${{ toJSON(steps.already-existing.outputs.result) }}
         run: |
           pushd xla
           git rev-parse master > ../.github/xla_commit_hash.txt
@@ -84,7 +86,6 @@ jobs:
           github-token: ${{ secrets.PAT }}
           script: |
             const { repo, owner } = context.repo;
-            github.token = GITHUB_TOKEN
             const result = await github.rest.pulls.create({
               title: '[XLA hash update] update the pinned xla hash',
               owner,
