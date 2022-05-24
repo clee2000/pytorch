@@ -33,13 +33,13 @@ jobs:
             console.log(JSON.stringify(open_prs.data))
             if (open_prs.data.total_count != 0) {
               const { repo, owner } = context.repo;
-              const a = github.rest.pulls.get({
+              const pr = await github.rest.pulls.get({
                 owner,
                 repo,
                 pull_number: open_prs.data.items[0].number,
               });
-              console.log(JSON.stringify(a.data))
-              return { exists: true, ref: a.data.head.ref }
+              console.log(JSON.stringify(pr.data))
+              return { exists: true, ref: pr.data.head.ref }
             } else {
               return { exists: false }
             }
