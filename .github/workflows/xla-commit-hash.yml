@@ -45,7 +45,7 @@ jobs:
       - name: Set config and update file
         shell: bash
         env:
-          THING: ${{ toJSON(steps.already-existing.outputs.result) }}
+          THING: ${{ toJSON(steps.already-existing.outputs.result.exists) }}
         run: |
           pushd xla
           git rev-parse master > ../.github/xla_commit_hash.txt
