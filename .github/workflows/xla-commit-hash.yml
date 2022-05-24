@@ -24,7 +24,7 @@ jobs:
 
       - name: Check if there already exists a PR
         uses: actions/github-script@v6
-        id: already-exists
+        id: already-existing
         with:
           script: |
             const open_prs = await github.rest.search.issuesAndPullRequests({
