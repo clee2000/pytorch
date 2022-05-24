@@ -59,7 +59,7 @@ jobs:
             git checkout -b "${BRANCH_NAME}"
             git add .github/xla_commit_hash.txt
             git commit -m "update xla commit hash"
-            git push --set-upstream origin "${BRANCH_NAME}"
+            git push --set-upstream origin "${BRANCH_NAME}" -f
           fi
 
       - name: Create Pull Request
