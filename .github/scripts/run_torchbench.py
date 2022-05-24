@@ -18,6 +18,7 @@ import pathlib
 import argparse
 import subprocess
 
+
 from typing import List
 
 TORCHBENCH_CONFIG_NAME = "config.yaml"
@@ -31,6 +32,7 @@ direction: decrease
 timeout: 720
 tests:"""
 
+
 def gen_abtest_config(control: str, treatment: str, models: List[str]) -> str:
     d = {}
     d["control"] = control
@@ -43,16 +45,19 @@ def gen_abtest_config(control: str, treatment: str, models: List[str]) -> str:
     config = config + "\n"
     return config
 
+
 def setup_gha_env(name: str, val: str) -> None:
     fname = os.environ["GITHUB_ENV"]
     content = f"{name}={val}\n"
     with open(fname, "a") as fo:
         fo.write(content)
 
+
 def find_current_branch(repo_path: str) -> str:
     repo = git.Repo(repo_path)
     name: str = repo.active_branch.name
     return name
+
 
 def deploy_torchbench_config(output_dir: str, config: str) -> None:
     # Create test dir if needed
@@ -61,6 +66,7 @@ def deploy_torchbench_config(output_dir: str, config: str) -> None:
     config_path = os.path.join(output_dir, TORCHBENCH_CONFIG_NAME)
     with open(config_path, "w") as fp:
         fp.write(config)
+
 
 def extract_models_from_pr(torchbench_path: str, prbody_file: str) -> List[str]:
     model_list = []
@@ -75,12 +81,14 @@ def extract_models_from_pr(torchbench_path: str, prbody_file: str) -> List[str]:
         return model_list
     # Sanity check: make sure all the user specified models exist in torchbench repository
     benchmark_path = os.path.join(torchbench_path, "torchbenchmark", "models")
-    full_model_list = [model for model in os.listdir(benchmark_path) if os.path.isdir(os.path.join(benchmark_path, model))]
+    full_model_list = [model for model in os.listdir(
+        benchmark_path) if os.path.isdir(os.path.join(benchmark_path, model))]
     for m in model_list:
         if m not in full_model_list:
             print(f"The model {m} you specified does not exist in TorchBench suite. Please double check.")
             return []
     return model_list
+
 
 def find_torchbench_branch(prbody_file: str) -> str:
     branch_name: str = ""
@@ -95,6 +103,7 @@ def find_torchbench_branch(prbody_file: str) -> str:
         branch_name = "main"
     return branch_name
 
+
 def run_torchbench(pytorch_path: str, torchbench_path: str, output_dir: str) -> None:
     # Copy system environment so that we will not override
     env = dict(os.environ)
@@ -103,6 +112,7 @@ def run_torchbench(pytorch_path: str, torchbench_path: str, output_dir: str) -> 
                "--config", os.path.join(output_dir, "config.yaml"),
                "--output", os.path.join(output_dir, "result.txt")]
     subprocess.check_call(command, cwd=torchbench_path, env=env)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run TorchBench tests based on PR')
