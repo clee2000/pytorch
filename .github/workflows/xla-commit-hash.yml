@@ -33,7 +33,7 @@ jobs:
             console.log(JSON.stringify(open_prs.data))
             if (open_prs.data.total_count != 0) {
               const { repo, owner } = context.repo;
-              const a = octokit.rest.pulls.get({
+              const a = github.rest.pulls.get({
                 owner,
                 repo,
                 pull_number: open_prs.data.items[0].number,
