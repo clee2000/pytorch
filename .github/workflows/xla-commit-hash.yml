@@ -28,7 +28,7 @@ jobs:
         with:
           script: |
             const open_prs = await github.rest.search.issuesAndPullRequests({
-              "is:pr is:open in:title author:clee2000 xla hash update"
+              q: "is:pr is:open in:title author:clee2000 xla hash update"
             });
             console.log(JSON.stringify(open_prs.data))
             if (open_prs.data.total_count != 0) {
