@@ -63,7 +63,7 @@ jobs:
           git add .github/xla_commit_hash.txt
           git commit -m "update xla commit hash"
           git rebase master
-          git push origin "${BRANCH_NAME}" -f
+          git push --set-upstream origin "${BRANCH_NAME}" -f
 
       - name: Get new commit hash and update file
         id: update-file
