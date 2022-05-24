@@ -16,6 +16,7 @@ jobs:
         with:
           fetch-depth: 1
           submodules: false
+          token: ${{ secrets.PAT }}
 
       - name: Checkout xla
         shell: bash
