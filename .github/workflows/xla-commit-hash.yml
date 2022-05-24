@@ -30,7 +30,6 @@ jobs:
             const open_prs = await github.rest.search.issuesAndPullRequests({
               q: "is:pr is:open in:title author:clee2000 xla hash update"
             });
-            console.log(JSON.stringify(open_prs.data))
             if (open_prs.data.total_count != 0) {
               const { repo, owner } = context.repo;
               const pr = await github.rest.pulls.get({
@@ -38,24 +37,27 @@ jobs:
                 repo,
                 pull_number: open_prs.data.items[0].number,
               });
-              console.log(JSON.stringify(pr.data))
               return { exists: true, ref: pr.data.head.ref }
             } else {
               return { exists: false }
             }
 
-      - name: Update the existing PR
+      - name: Set config and update file
         shell: bash
-        if: ${{ steps.already-existing.outputs.exists }}
-        env:
-          BRANCH_NAME: ${{ steps.already-existing.outputs.result }}
         run: |
           pushd xla
           git rev-parse master > ../.github/xla_commit_hash.txt
           popd
-          git checkout "${BRANCH_NAME}"
           git config --global user.email "csl@fb.com"
           git config --global user.name "Catherine Lee"
+
+      - name: Update the existing PR
+        shell: bash
+        if: ${{ steps.already-existing.outputs.result.exists }}
+        env:
+          BRANCH_NAME: ${{ steps.already-existing.outputs.result.ref }}
+        run: |
+          git checkout "${BRANCH_NAME}"
           git add .github/xla_commit_hash.txt
           git commit -m "update xla commit hash"
           git rebase master
@@ -63,35 +65,25 @@ jobs:
 
       - name: Get new commit hash and update file
         id: update-file
-        if: ${{ !steps.already-existing.outputs.exists }}
+        if: ${{ !steps.already-existing.outputs.result.exists }}
         shell: bash
         run: |
-          echo "::set-output name=original_commit::$(cat .github/xla_commit_hash.txt)"
-          pushd xla
-          git rev-parse master > ../.github/xla_commit_hash.txt
-          popd
           if [[ $(git diff --exit-code .github/xla_commit_hash.txt) ]]; then
             git checkout -b "${NEW_BRANCH_NAME}"
-            git config --global user.email "csl@fb.com"
-            git config --global user.name "Catherine Lee"
             git add .github/xla_commit_hash.txt
             git commit -m "update xla commit hash"
             git push --set-upstream origin "${NEW_BRANCH_NAME}"
-            echo "::set-output name=new_commit::$(cat .github/xla_commit_hash.txt)"
           fi
 
       - name: Create Pull Request
         uses: actions/github-script@v6
-        if: ${{ !steps.already-existing.outputs.exists }}
+        if: ${{ !steps.already-existing.outputs.result.exists }}
         env:
-          ORIGINAL_COMMIT: ${{ steps.update-file.outputs.original_commit }}
-          NEW_COMMIT: ${{ steps.update-file.outputs.new_commit }}
           THING: ${{ toJson(github) }}
         with:
           github-token: ${{ secrets.PAT }}
           script: |
             const { repo, owner } = context.repo;
-            const { NEW_BRANCH_NAME, NEW_COMMIT, ORIGINAL_COMMIT, GITHUB_TOKEN } = process.env
             github.token = GITHUB_TOKEN
             const result = await github.rest.pulls.create({
               title: '[XLA hash update] update the pinned xla hash',
@@ -101,6 +93,6 @@ jobs:
               base: 'master',
               body: [
                 'This PR is auto-generated nightly by [this action](https://github.com/clee2000/pytorch/blob/master/.github/workflows/xla-commit-hash.yml).\n',
-                `Update the pinned xla hash from \`${ORIGINAL_COMMIT}\` to \`${NEW_COMMIT}\`.`
+                `Update the pinned xla hash.`
               ].join('')
             });
