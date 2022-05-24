@@ -39,7 +39,7 @@ jobs:
                 repo,
                 pull_number: open_prs.data.items[0].number,
               });
-              return pr.data.head.ref
+              return pr.data.head.ref;
             }
 
       - name: Get new commit hash, update file, push to branch
@@ -70,6 +70,7 @@ jobs:
           github-token: ${{ secrets.PAT }}
           script: |
             const { repo, owner } = context.repo;
+            const { NEW_BRANCH_NAME } = process.env;
             const result = await github.rest.pulls.create({
               title: '[XLA hash update] update the pinned xla hash',
               owner,
