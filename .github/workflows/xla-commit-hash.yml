@@ -26,6 +26,7 @@ jobs:
         uses: actions/github-script@v6
         id: already-existing
         with:
+          result-encoding: string
           script: |
             const open_prs = await github.rest.search.issuesAndPullRequests({
               q: "is:pr is:open in:title author:clee2000 xla hash update"
