@@ -21,6 +21,7 @@ import subprocess
 
 from typing import List
 
+
 TORCHBENCH_CONFIG_NAME = "config.yaml"
 MAGIC_PREFIX = "RUN_TORCHBENCH:"
 MAGIC_TORCHBENCH_PREFIX = "TORCHBENCH_BRANCH:"
