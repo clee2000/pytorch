@@ -2,6 +2,7 @@ name: Update xla commit hash
 
 on:
   workflow_dispatch:
+  push:
 
 env:
   NEW_BRANCH_NAME: clee2000/xla/${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
@@ -24,12 +25,10 @@ jobs:
       - name: Check if there already exists a PR
         uses: actions/github-script@v6
         id: already-exists
-        env:
-          NEW_BRANCH_NAME:
         with:
           script: |
             const open_prs = await github.rest.search.issuesAndPullRequests({
-              "is:pr is:open in:title author:clee2000 xla hash update",
+              "is:pr is:open in:title author:clee2000 xla hash update"
             });
             console.log(JSON.stringify(open_prs.data))
             if (open_prs.data.total_count != 0) {
