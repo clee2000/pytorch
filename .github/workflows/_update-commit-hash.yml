@@ -43,7 +43,7 @@ jobs:
           script: |
             const { repo, owner } = context.repo;
             const open_prs = await github.rest.search.issuesAndPullRequests({
-              q: `is:pr is:open in:title author:pytorchmergebot repo:${owner}/${repo} ${{ inputs.repo-name }} hash update`
+              q: `is:pr is:open in:title author:clee2000 repo:${owner}/${repo} ${{ inputs.repo-name }} hash update`
             });
             if (open_prs.data.total_count != 0) {
               const pr = await github.rest.pulls.get({
