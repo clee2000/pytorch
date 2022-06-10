@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import requests
@@ -25,15 +26,16 @@ def make_pr(repo_name, branch_name) -> Any:
     params = {
         "title": f"[{repo_name} hash update] update the pinned {repo_name} hash",
         "head": branch_name,
+        "base": "master",
         "body": "This PR is auto - generated nightly by[this action](https://github.com/pytorch/pytorch/blob/master/.github/workflows/_update-commit-hash.yml).\nUpdate the pinned {args.repo_name} hash.",
     }
-    response = requests.get(
+    response = requests.post(
         f"https://api.github.com/repos/{owner}/{repo}/pulls",
-        params=params,
+        data=json.dumps(params),
         headers=REQUEST_HEADERS,
     ).json()
-    print(f"made pr {response.number}")
-    return response.number
+    print(f"made pr {response['number']}")
+    return response["number"]
 
 
 def approve_pr(pr_number):
@@ -47,9 +49,9 @@ def approve_pr(pr_number):
 
 def make_comment(pr_number):
     params = {"body": "a;dlsfkj"}
-    requests.get(
+    requests.post(
         f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments",
-        params=params,
+        data=json.dumps(params),
         headers=REQUEST_HEADERS,
     )
 
@@ -57,7 +59,8 @@ def make_comment(pr_number):
 def main() -> None:
     args = parse_args()
 
-    branch_name = os.environ["NEW_BRANCH_NAME"]
+    branch_name = os.getenv["NEW_BRANCH_NAME"]
+    pr_num = None
 
     # query to see if a pr already exists
     params = {
@@ -77,15 +80,17 @@ def main() -> None:
         print(f"pr does exist, number is {pr_num}, branch name is {branch_name}")
 
     # update file
-    command = f"pushd {args.repo_name} && git rev-parse {args.branch} > ../.github/{args.repo_name}_commit_hash.txt"
-    subprocess.run(command.split(), executable="/bin/bash")
-    retcode = subprocess.run(
-        f"git diff --exit-code .github/{args.repo_name}_commit_hash.txt".split()
-    ).returncode
-    print(os.getcwd())
-    print(subprocess.run(["cwd"]))
-    print(retcode)
-    if retcode == 1:
+    hash = subprocess.run(
+        f"git rev-parse {args.branch}".split(), capture_output=True
+    ).stdout.decode("utf-8")
+    with open(f".github/{args.repo_name}_commit_hash.txt", "w") as f:
+        f.write(hash.strip())
+    if (
+        subprocess.run(
+            f"git diff --exit-code .github/{args.repo_name}_commit_hash.txt".split()
+        ).returncode
+        == 1
+    ):
         # if there was an update, push to the branch
         subprocess.run(
             f"git config --global user.email 'pytorchmergebot@users.noreply.github.com'".split()
