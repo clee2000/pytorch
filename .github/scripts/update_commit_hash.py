@@ -32,6 +32,7 @@ def make_pr(repo_name, branch_name) -> Any:
         params=params,
         headers=REQUEST_HEADERS,
     ).json()
+    print(f"made pr {response.number}")
     return response.number
 
 
@@ -73,6 +74,7 @@ def main() -> None:
             headers=REQUEST_HEADERS,
         ).json()
         branch_name = response["head"]["ref"]
+        print(f"pr does exist, number is {pr_num}, branch name is {branch_name}")
 
     # update file
     command = f"pushd {args.repo_name} && git rev-parse {args.branch} > ../.github/{args.repo_name}_commit_hash.txt"
@@ -97,6 +99,7 @@ def main() -> None:
             f"git commit -m".split() + [f"update {args.repo_name} commit hash"]
         )
         subprocess.run(f"git push --set-upstream origin {branch_name} -f".split())
+        print(f"changes pushed to branch {branch_name}")
         if pr_num is None:
             pr_num = make_pr(args.repo_name, branch_name)
     if pr_num != None:
