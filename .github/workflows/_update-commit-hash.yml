@@ -97,7 +97,7 @@ jobs:
               ].join('')
             });
             const pull_number = result.data.number;
-            octokit.rest.pulls.createReview({
+            github.rest.pulls.createReview({
               owner,
               repo,
               pull_number,
