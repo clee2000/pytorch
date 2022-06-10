@@ -80,7 +80,7 @@ def main() -> None:
     if (
         subprocess.run(
             f"git diff --exit-code .github/{args.repo_name}_commit_hash.txt".split()
-        ).return_code
+        ).returncode
         == 1
     ):
         # if there was an update, push to the branch
