@@ -40,9 +40,9 @@ def make_pr(repo_name, branch_name) -> Any:
 
 def approve_pr(pr_number):
     params = {"event": "APRROVE"}
-    requests.get(
+    requests.post(
         f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/reviews",
-        params=params,
+        data=json.dumps(params),
         headers=REQUEST_HEADERS,
     )
 
