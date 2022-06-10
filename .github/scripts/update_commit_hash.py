@@ -78,20 +78,16 @@ def main() -> None:
 
     # update file
     command = f"pushd {args.repo_name} && git rev-parse {args.branch} > ../.github/{args.repo_name}_commit_hash.txt"
-    subprocess.run(command.split(), executable='/bin/bash')
-    if (
-        subprocess.run(
-            f"git diff --exit-code .github/{args.repo_name}_commit_hash.txt".split()
-        ).returncode
-        == 1
-    ):
+    subprocess.run(command.split(), executable="/bin/bash")
+    retcode = subprocess.run(
+        f"git diff --exit-code .github/{args.repo_name}_commit_hash.txt".split()
+    ).returncode
+    if retcode == 1:
         # if there was an update, push to the branch
         subprocess.run(
             f"git config --global user.email 'pytorchmergebot@users.noreply.github.com'".split()
         )
-        subprocess.run(
-            f"git config --global user.name".split() + ["PyTorch MergeBot"]
-        )
+        subprocess.run(f"git config --global user.name".split() + ["PyTorch MergeBot"])
         subprocess.run(f"git checkout -b {branch_name}".split())
         subprocess.run(f"git add .github/{args.repo_name}_commit_hash.txt".split())
         subprocess.run(f"git add .github/{args.repo_name}_commit_hash.txt".split())
