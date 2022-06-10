@@ -59,7 +59,7 @@ def make_comment(pr_number):
 def main() -> None:
     args = parse_args()
 
-    branch_name = os.getenv["NEW_BRANCH_NAME"]
+    branch_name = os.environ["NEW_BRANCH_NAME"]
     pr_num = None
 
     # query to see if a pr already exists
