@@ -82,6 +82,7 @@ def main() -> None:
     retcode = subprocess.run(
         f"git diff --exit-code .github/{args.repo_name}_commit_hash.txt".split()
     ).returncode
+    print(retcode)
     if retcode == 1:
         # if there was an update, push to the branch
         subprocess.run(
