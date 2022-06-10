@@ -76,7 +76,7 @@ def main() -> None:
 
     # update file
     command = f"pushd {args.repo_name} && git rev-parse {args.branch} > ../.github/{args.repo_name}_commit_hash.txt"
-    subprocess.run(command.split())
+    subprocess.run(command.split(), executable='/bin/bash')
     if (
         subprocess.run(
             f"git diff --exit-code .github/{args.repo_name}_commit_hash.txt".split()
