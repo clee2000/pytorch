@@ -13,6 +13,21 @@ REQUEST_HEADERS = {
 owner, repo = "clee2000", "pytorch"
 
 
+def git_api(url, params, post=False) -> Any:
+    if post:
+        return requests.post(
+            f"https://api.github.com{url}",
+            data=json.dumps(params),
+            headers=REQUEST_HEADERS,
+        ).json()
+    else:
+        return requests.get(
+            f"https://api.github.com{url}",
+            params=params,
+            headers=REQUEST_HEADERS,
+        ).json()
+
+
 def parse_args() -> Any:
     from argparse import ArgumentParser
 
@@ -27,33 +42,21 @@ def make_pr(repo_name, branch_name) -> Any:
         "title": f"[{repo_name} hash update] update the pinned {repo_name} hash",
         "head": branch_name,
         "base": "master",
-        "body": "This PR is auto - generated nightly by[this action](https://github.com/pytorch/pytorch/blob/master/.github/workflows/_update-commit-hash.yml).\nUpdate the pinned {args.repo_name} hash.",
+        "body": f"This PR is auto - generated nightly by [this action](https://github.com/pytorch/pytorch/blob/master/.github/workflows/_update-commit-hash.yml).\nUpdate the pinned {repo_name} hash.",
     }
-    response = requests.post(
-        f"https://api.github.com/repos/{owner}/{repo}/pulls",
-        data=json.dumps(params),
-        headers=REQUEST_HEADERS,
-    ).json()
+    response = git_api(f"/{owner}/{repo}/pulls", params, post=True)
     print(f"made pr {response['number']}")
     return response["number"]
 
 
 def approve_pr(pr_number):
     params = {"event": "APRROVE"}
-    requests.post(
-        f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/reviews",
-        data=json.dumps(params),
-        headers=REQUEST_HEADERS,
-    )
+    git_api(f"/repos/{owner}/{repo}/pulls/{pr_number}/reviews", params, post=True)
 
 
 def make_comment(pr_number):
     params = {"body": "a;dlsfkj"}
-    requests.post(
-        f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments",
-        data=json.dumps(params),
-        headers=REQUEST_HEADERS,
-    )
+    git_api(f"/repos/{owner}/{repo}/issues/{pr_number}/comments", params, post=True)
 
 
 def main() -> None:
@@ -66,16 +69,11 @@ def main() -> None:
     params = {
         "q": f"is:pr is:open in:title author:clee2000 repo:clee2000/pytorch {args.repo_name} hash update"
     }
-    response = requests.get(
-        "https://api.github.com/search/issues", params=params, headers=REQUEST_HEADERS
-    ).json()
+    response = git_api(f"/search/issues", params)
     if response["total_count"] != 0:
         # pr does exist
         pr_num = response["items"][0]["number"]
-        response = requests.get(
-            f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_num}",
-            headers=REQUEST_HEADERS,
-        ).json()
+        response = git_api(f"/repos/{owner}/{repo}/pulls/{pr_num}", {})
         branch_name = response["head"]["ref"]
         print(f"pr does exist, number is {pr_num}, branch name is {branch_name}")
 
