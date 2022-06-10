@@ -96,3 +96,10 @@ jobs:
                 `Update the pinned ${{ inputs.repo-name }} hash.`
               ].join('')
             });
+            const pull_number = result.data.number;
+            octokit.rest.pulls.createReview({
+              owner,
+              repo,
+              pull_number,
+              event: 'APPROVE'
+            });
