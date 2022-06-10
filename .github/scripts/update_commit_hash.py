@@ -1,5 +1,5 @@
-from asyncio import subprocess
 import os
+import subprocess
 import requests
 from typing import Any
 
