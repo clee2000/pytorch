@@ -50,7 +50,7 @@ def make_pr(repo_name, branch_name) -> Any:
 
 
 def approve_pr(pr_number):
-    params = {"event": "APRROVE"}
+    params = {"event": "APPROVE"}
     # use pytorchbot to approve the pr
     REQUEST_HEADERS["Authorization"] = f"token {PYTORCHBOT_TOKEN}"
     response = git_api(f"/repos/{OWNER}/{REPO}/pulls/{pr_number}/reviews", params, post=True)
