@@ -4,13 +4,13 @@ import subprocess
 import requests
 from typing import Any
 
-PYTORCH_REPO = "https://api.github.com/repos/pytorch/pytorch"
-GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
+MERGEBOT_TOKEN = os.environ["MERGEBOT_TOKEN"]
+PYTORCHBOT_TOKEN = os.environ["PYTORCHBOT_TOKEN"]
+OWNER, REPO = "clee2000", "pytorch"
 REQUEST_HEADERS = {
     "Accept": "application/vnd.github.v3+json",
-    "Authorization": "token " + GITHUB_TOKEN,
+    "Authorization": f"token {MERGEBOT_TOKEN}",
 }
-owner, repo = "clee2000", "pytorch"
 
 
 def git_api(url, params, post=False) -> Any:
@@ -42,21 +42,24 @@ def make_pr(repo_name, branch_name) -> Any:
         "title": f"[{repo_name} hash update] update the pinned {repo_name} hash",
         "head": branch_name,
         "base": "master",
-        "body": f"This PR is auto - generated nightly by [this action](https://github.com/pytorch/pytorch/blob/master/.github/workflows/_update-commit-hash.yml).\nUpdate the pinned {repo_name} hash.",
+        "body": f"This PR is auto-generated nightly by [this action](https://github.com/pytorch/pytorch/blob/master/.github/workflows/_update-commit-hash.yml).\nUpdate the pinned {repo_name} hash.",
     }
-    response = git_api(f"/{owner}/{repo}/pulls", params, post=True)
+    response = git_api(f"/{OWNER}/{REPO}/pulls", params, post=True)
     print(f"made pr {response['number']}")
     return response["number"]
 
 
 def approve_pr(pr_number):
     params = {"event": "APRROVE"}
-    git_api(f"/repos/{owner}/{repo}/pulls/{pr_number}/reviews", params, post=True)
+    # use pytorchbot to approve the pr
+    REQUEST_HEADERS["Authorization"] = f"token {PYTORCHBOT_TOKEN}"
+    git_api(f"/repos/{OWNER}/{REPO}/pulls/{pr_number}/reviews", params, post=True)
+    REQUEST_HEADERS["Authorization"] = f"token {MERGEBOT_TOKEN}"
 
 
 def make_comment(pr_number):
     params = {"body": "a;dlsfkj"}
-    git_api(f"/repos/{owner}/{repo}/issues/{pr_number}/comments", params, post=True)
+    git_api(f"/repos/{OWNER}/{REPO}/issues/{pr_number}/comments", params, post=True)
 
 
 def main() -> None:
@@ -73,13 +76,13 @@ def main() -> None:
     if response["total_count"] != 0:
         # pr does exist
         pr_num = response["items"][0]["number"]
-        response = git_api(f"/repos/{owner}/{repo}/pulls/{pr_num}", {})
+        response = git_api(f"/repos/{OWNER}/{REPO}/pulls/{pr_num}", {})
         branch_name = response["head"]["ref"]
         print(f"pr does exist, number is {pr_num}, branch name is {branch_name}")
 
     # update file
     hash = subprocess.run(
-        f"git rev-parse {args.branch}".split(), capture_output=True
+        f"git rev-parse {args.branch}".split(), capture_output=True, cwd=f'{args.repo_name}'
     ).stdout.decode("utf-8")
     with open(f".github/{args.repo_name}_commit_hash.txt", "w") as f:
         f.write(hash.strip())
@@ -89,7 +92,7 @@ def main() -> None:
         ).returncode
         == 1
     ):
-        # if there was an update, push to the branch
+        # if there was an update, push to branch
         subprocess.run(
             f"git config --global user.email 'pytorchmergebot@users.noreply.github.com'".split()
         )
@@ -103,8 +106,11 @@ def main() -> None:
         subprocess.run(f"git push --set-upstream origin {branch_name} -f".split())
         print(f"changes pushed to branch {branch_name}")
         if pr_num is None:
+            # no existing pr
             pr_num = make_pr(args.repo_name, branch_name)
+            approve_pr(pr_num)
     if pr_num != None:
+        # comment to merge if all checks are green
         make_comment(pr_num)
 
 

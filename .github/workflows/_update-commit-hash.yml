@@ -15,6 +15,9 @@ on:
       MERGEBOT_TOKEN:
         required: true
         description: Permissions for opening PR
+      PYTORCHBOT_TOKEN:
+        required: true
+        description: Permissions for approving PR
 
 env:
   NEW_BRANCH_NAME: update-${{ inputs.repo-name }}-commit-hash/${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
@@ -40,6 +43,11 @@ jobs:
         env:
           REPO_NAME: ${{ inputs.repo-name }}
           BRANCH: ${{ inputs.branch }}
-          GITHUB_TOKEN: ${{ secrets.MERGEBOT_TOKEN }}
+          MERGEBOT_TOKEN: ${{ secrets.MERGEBOT_TOKEN }}
+          PYTORCHBOT_TOKEN: ${{ secrets.PYTORCHBOT_TOKEN }}
         run: |
+          # put this here instead of the script to prevent accidentally changing the config when running the script locally
+          git config --global user.name "PyTorch MergeBot"
+          git config --global user.email 'pytorchmergebot@users.noreply.github.com'
+
           python .github/scripts/update_commit_hash.py --repo-name ${REPO_NAME} --branch ${BRANCH}

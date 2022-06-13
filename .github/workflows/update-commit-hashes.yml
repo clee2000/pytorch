@@ -19,6 +19,7 @@ jobs:
       branch: master
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.PAT }}
+      PYTORCHBOT_TOKEN: ${{ secrets.PAT }}
 
   update-torchdynamo-commit-hash:
     uses: ./.github/workflows/_update-commit-hash.yml
@@ -27,3 +28,4 @@ jobs:
       branch: main
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.PAT }}
+      PYTORCHBOT_TOKEN: ${{ secrets.PAT }}
