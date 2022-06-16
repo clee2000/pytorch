@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 
 MERGEBOT_TOKEN = os.environ["MERGEBOT_TOKEN"]
 PYTORCHBOT_TOKEN = os.environ["PYTORCHBOT_TOKEN"]
-OWNER, REPO = "pytorch", "pytorch"
+OWNER, REPO = "clee2000", "pytorch"
 
 
 def git_api(
@@ -63,7 +63,7 @@ def approve_pr(pr_number: str) -> None:
 
 
 def make_comment(pr_number: str) -> None:
-    params = {"body": "@pytorchbot merge -g"}
+    params = {"body": "heres a comment"}
     git_api(f"/repos/{OWNER}/{REPO}/issues/{pr_number}/comments", params, post=True)
 
 
@@ -75,7 +75,7 @@ def main() -> None:
 
     # query to see if a pr already exists
     params = {
-        "q": f"is:pr is:open in:title author:pytorchmergebot repo:pytorch/pytorch {args.repo_name} hash update"
+        "q": f"is:pr is:open in:title author:pytorchmergebot repo:{OWNER}/{REPO} {args.repo_name} hash update"
     }
     response = git_api("/search/issues", params)
     if response["total_count"] != 0:

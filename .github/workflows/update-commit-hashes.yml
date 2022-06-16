@@ -7,9 +7,9 @@ on:
   #   # See https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   #   - cron: 37 0 * * *
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
 
 jobs:
   update-xla-commit-hash:
@@ -19,7 +19,7 @@ jobs:
       branch: master
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.PAT }}
-      PYTORCHBOT_TOKEN: ${{ secrets.PAT }}
+      PYTORCHBOT_TOKEN: ${{ secrets.UPDATE_HASH_TOKEN }}
 
   update-torchdynamo-commit-hash:
     uses: ./.github/workflows/_update-commit-hash.yml
@@ -28,7 +28,7 @@ jobs:
       branch: main
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.PAT }}
-      PYTORCHBOT_TOKEN: ${{ secrets.PAT }}
+      PYTORCHBOT_TOKEN: ${{ secrets.UPDATE_HASH_TOKEN }}
 
   update-vision-commit-hash:
     uses: ./.github/workflows/_update-commit-hash.yml
@@ -37,4 +37,4 @@ jobs:
       branch: main
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.PAT }}
-      PYTORCHBOT_TOKEN: ${{ secrets.PAT }}
+      PYTORCHBOT_TOKEN: ${{ secrets.UPDATE_HASH_TOKEN }}
