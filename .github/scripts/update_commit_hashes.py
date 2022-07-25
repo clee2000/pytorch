@@ -115,7 +115,7 @@ def main() -> None:
 
     # query to see if a pr already exists
     params = {
-        "q": f"is:pr is:open in:title author:pytorchmergebot repo:{OWNER}/{REPO} {args.repo_name} hash update"
+        "q": f"is:pr is:open in:title author:clee2000 repo:{OWNER}/{REPO} {args.repo_name} hash update"
     }
     response = git_api("/search/issues", params)
     if response["total_count"] != 0:
