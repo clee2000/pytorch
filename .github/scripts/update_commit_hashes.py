@@ -134,6 +134,8 @@ def main() -> None:
         f.seek(0)
         f.truncate()
         f.write(hash)
+    print(hash)
+    print(old_hash)
     if is_newer_hash(hash.strip(), old_hash.strip(), args.repo_name):
         # if there was an update, push to branch
         subprocess.run(f"git checkout -b {branch_name}".split())
