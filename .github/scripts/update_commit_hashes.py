@@ -102,6 +102,8 @@ def is_newer_hash(new_hash: str, old_hash: str, repo_name: str) -> bool:
         capture_output=True,
         cwd=f"{repo_name}",
     ).stdout.decode("utf-8").strip()
+    print(new_date)
+    print(old_date)
     return int(new_date) > int(old_date)
 
 
@@ -134,8 +136,6 @@ def main() -> None:
         f.seek(0)
         f.truncate()
         f.write(hash)
-    print(hash)
-    print(old_hash)
     if is_newer_hash(hash.strip(), old_hash.strip(), args.repo_name):
         # if there was an update, push to branch
         subprocess.run(f"git checkout -b {branch_name}".split())
