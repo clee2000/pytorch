@@ -82,12 +82,13 @@ def make_comment(pr_number: str) -> None:
 def close_pr(pr_number: str) -> None:
     params = {"state": "closed"}
     # comment with pytorchbot because pytorchmergebot gets ignored
-    git_api(
+    response = git_api(
         f"/repos/{OWNER}/{REPO}/pulls/{pr_number}",
         params,
         type="patch",
         token=PYTORCHBOT_TOKEN,
     )
+    print(response)
 
 
 def is_newer_hash(new_hash: str, old_hash: str, repo_name: str) -> bool:
@@ -123,20 +124,21 @@ def main() -> None:
         pr_num = response["items"][0]["number"]
         response = git_api(f"/repos/{OWNER}/{REPO}/pulls/{pr_num}", {})
         branch_name = response["head"]["ref"]
-        print(f"pr does exist, number is {pr_num}, branch name is {branch_name}")
+        print(
+            f"pr does exist, number is {pr_num}, branch name is {branch_name}, link is {response['items'][0]['html_url']}")
 
     # update file
     hash = subprocess.run(
         f"git rev-parse {args.branch}".split(),
         capture_output=True,
         cwd=f"{args.repo_name}",
-    ).stdout.decode("utf-8")
+    ).stdout.decode("utf-8").strip()
     with open(f".github/ci_commit_pins/{args.repo_name}.txt", "r+") as f:
-        old_hash = f.read()
+        old_hash = f.read().strip()
         f.seek(0)
         f.truncate()
-        f.write(hash)
-    if is_newer_hash(hash.strip(), old_hash.strip(), args.repo_name):
+        f.write(f"{hash}\n")
+    if is_newer_hash(hash.strip(), old_hash, args.repo_name):
         # if there was an update, push to branch
         subprocess.run(f"git checkout -b {branch_name}".split())
         subprocess.run(f"git add .github/ci_commit_pins/{args.repo_name}.txt".split())
@@ -153,11 +155,11 @@ def main() -> None:
         make_comment(pr_num)
     else:
         print(
-            f"tried to update from {old_hash} to {hash} but {old_hash} seems to be newer, not creating pr"
+            f"tried to update from old hash: {old_hash} to new hash: {hash} but the old hash seems to be newer, not creating pr"
         )
         if pr_num is not None:
             close_pr(pr_num)
-            print(f"{pr_num} closed")
+            print(f"closing PR {pr_num}")
 
 
 if __name__ == "__main__":
