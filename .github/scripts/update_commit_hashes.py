@@ -121,7 +121,7 @@ def main() -> None:
         capture_output=True,
         cwd=f"{args.repo_name}",
     ).stdout.decode("utf-8")
-    with open(f".github/ci_commit_pins/{args.repo_name}.txt", "w") as f:
+    with open(f".github/ci_commit_pins/{args.repo_name}.txt", "r+") as f:
         old_hash = f.read()
         f.seek(0)
         f.truncate()
