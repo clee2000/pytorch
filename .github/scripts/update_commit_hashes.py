@@ -81,12 +81,10 @@ def make_comment(pr_number: str) -> None:
 
 def close_pr(pr_number: str) -> None:
     params = {"state": "closed"}
-    # comment with pytorchbot because pytorchmergebot gets ignored
     response = git_api(
         f"/repos/{OWNER}/{REPO}/pulls/{pr_number}",
         params,
         type="patch",
-        token=PYTORCHBOT_TOKEN,
     )
     print(response)
 
