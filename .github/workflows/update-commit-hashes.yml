@@ -16,7 +16,7 @@ jobs:
       branch: master
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.MERGEBOT_TOKEN }}
-      PYTORCHBOT_TOKEN: ${{ secrets.GH_PYTORCHBOT_TOKEN }}
+      PYTORCHBOT_TOKEN: ${{ secrets.PYTORCHBOT_TOKEN }}
 
   update-torchdynamo-commit-hash:
     uses: ./.github/workflows/_update-commit-hash.yml
@@ -25,7 +25,7 @@ jobs:
       branch: main
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.MERGEBOT_TOKEN }}
-      PYTORCHBOT_TOKEN: ${{ secrets.GH_PYTORCHBOT_TOKEN }}
+      PYTORCHBOT_TOKEN: ${{ secrets.PYTORCHBOT_TOKEN }}
 
   update-vision-commit-hash:
     uses: ./.github/workflows/_update-commit-hash.yml
@@ -34,4 +34,4 @@ jobs:
       branch: main
     secrets:
       MERGEBOT_TOKEN: ${{ secrets.MERGEBOT_TOKEN }}
-      PYTORCHBOT_TOKEN: ${{ secrets.GH_PYTORCHBOT_TOKEN }}
+      PYTORCHBOT_TOKEN: ${{ secrets.PYTORCHBOT_TOKEN }}

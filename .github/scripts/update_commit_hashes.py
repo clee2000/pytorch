@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 
 MERGEBOT_TOKEN = os.environ["MERGEBOT_TOKEN"]
 PYTORCHBOT_TOKEN = os.environ["PYTORCHBOT_TOKEN"]
-OWNER, REPO = "pytorch", "pytorch"
+OWNER, REPO = "clee2000", "pytorch"
 
 
 def git_api(
