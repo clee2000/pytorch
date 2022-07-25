@@ -122,10 +122,11 @@ def main() -> None:
     if response["total_count"] != 0:
         # pr does exist
         pr_num = response["items"][0]["number"]
+        link = response["items"][0]["html_url"]
         response = git_api(f"/repos/{OWNER}/{REPO}/pulls/{pr_num}", {})
         branch_name = response["head"]["ref"]
         print(
-            f"pr does exist, number is {pr_num}, branch name is {branch_name}, link is {response['items'][0]['html_url']}")
+            f"pr does exist, number is {pr_num}, branch name is {branch_name}, link is {link}")
 
     # update file
     hash = subprocess.run(
