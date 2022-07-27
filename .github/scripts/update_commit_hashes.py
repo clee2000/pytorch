@@ -60,23 +60,25 @@ def make_pr(repo_name: str, branch_name: str) -> Any:
 def approve_pr(pr_number: str) -> None:
     params = {"event": "APPROVE"}
     # use pytorchbot to approve the pr
-    git_api(
+    response = git_api(
         f"/repos/{OWNER}/{REPO}/pulls/{pr_number}/reviews",
         params,
         type="post",
         token=PYTORCHBOT_TOKEN,
     )
+    print(json.dumps(response, indent=2))
 
 
 def make_comment(pr_number: str) -> None:
     params = {"body": "@pytorchbot merge -g"}
     # comment with pytorchbot because pytorchmergebot gets ignored
-    git_api(
+    response = git_api(
         f"/repos/{OWNER}/{REPO}/issues/{pr_number}/comments",
         params,
         type="post",
         token=PYTORCHBOT_TOKEN,
     )
+    print(json.dumps(response, indent=2))
 
 
 def close_pr(pr_number: str) -> None:
