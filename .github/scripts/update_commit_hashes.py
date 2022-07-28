@@ -151,8 +151,8 @@ def main() -> None:
         if pr_num is None:
             # no existing pr, so make a new one and approve it
             pr_num = make_pr(args.repo_name, branch_name)
-            approve_pr(pr_num)
         # comment to merge if all checks are green
+        approve_pr(pr_num)
         make_comment(pr_num)
     else:
         print(
